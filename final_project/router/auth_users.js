@@ -1,6 +1,6 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
-let books = require("./booksdb.js");
+let books = require('./booksdb.js');
 const regd_users = express.Router();
 
 let users = [];
@@ -16,7 +16,7 @@ const isValid = (username) => {
     }
 };
 
-const authenticatedUser = (username,password)=>{
+const authenticatedUser = (username, password) => {
     let validusers = users.filter((user) => {
         return user.username === username && user.password === password;
     });
@@ -27,8 +27,8 @@ const authenticatedUser = (username,password)=>{
     }
 };
 
-//only registered users can login
-regd_users.post("/login", (req,res) => {
+// Task 7 - only registered users can login
+regd_users.post('/login', (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
@@ -57,21 +57,23 @@ regd_users.post("/login", (req,res) => {
     }
 });
 
-// Add a book review
-regd_users.put("/auth/review/:isbn", (req, res) => {
-  const isbn = req.params.isbn;
-  const activeuser = req.session.authorization.username
-  const reviewtext = req.query.review
-  const review = { [activeuser] : reviewtext}
-  books[isbn].reviews[activeuser] = reviewtext
-  res.send(review)
-});
-
-regd_users.delete("/auth/review/:isbn", (req, res) => {
+// Task 8 - Add a book review
+regd_users.put('/auth/review/:isbn', (req, res) => {
     const isbn = req.params.isbn;
     const activeuser = req.session.authorization.username;
-    if (books[isbn].reviews && books[isbn].reviews[activeuser]) delete books[isbn].reviews[activeuser];
-    res.send(`${activeuser}'s review of book ${isbn} deleted!`)
+    const reviewtext = req.query.review;
+    const review = { [activeuser]: reviewtext };
+    books[isbn].reviews[activeuser] = reviewtext;
+    res.send(review);
+});
+
+// Task 9 - Delete a book review
+regd_users.delete('/auth/review/:isbn', (req, res) => {
+    const isbn = req.params.isbn;
+    const activeuser = req.session.authorization.username;
+    if (books[isbn].reviews && books[isbn].reviews[activeuser])
+        delete books[isbn].reviews[activeuser];
+    res.send(`${activeuser}'s review of book ${isbn} deleted!`);
 });
 
 module.exports.authenticated = regd_users;
